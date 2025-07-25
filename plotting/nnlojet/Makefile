@@ -36,7 +36,7 @@ NAMES = \
 	  logflag=""; \
 	  echo "$$obs" | grep -q '_log$$' && logflag="--logscale"; \
 	  echo "$$order.$$obs.dat → [$$script] → $$outfile"; \
-	  $(PYTHON) $$script --path $(DATADIR) --input $$inputs --output $$outfile $$logflag
+	  $(PYTHON) $$script --path $(DATADIR) --input $$inputs --output $$outfile $$logflag --histogram
 
   clean:
 	rm -f $(OUTDIR)/*.pdf

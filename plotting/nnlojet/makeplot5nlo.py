@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 import argparse
 import os
@@ -13,6 +14,7 @@ parser.add_argument('--input', nargs=2, required=True, help="Input filenames: fi
 parser.add_argument('--output', default="output_lo_nlo_ratio.pdf", help="Output filename")
 parser.add_argument('--add-logo', action='store_true', help="Add 'NNLOJET' stylized logo on the top-right")
 parser.add_argument('--logscale', action='store_true', help="Use logarithmic scale on the x-axis")
+parser.add_argument('--histogram', action='store_true', help="Plot as histogram instead of function-style curve")
 args = parser.parse_args()
 
 filename_lo = os.path.join(args.path, args.input[0])
@@ -72,6 +74,9 @@ if not df_lo["center"].equals(df_nlo["center"]):
 x = df_lo["center"]
 
 # LO
+x_edges = df_lo["lower"].tolist()
+x_edges.append(df_lo["upper"].iloc[-1])
+x_edges = np.array(x_edges)
 lo_central = df_lo["tot_scale01"]
 lo_low = df_lo[["tot_scale02", "tot_scale03"]].min(axis=1)
 lo_up = df_lo[["tot_scale02", "tot_scale03"]].max(axis=1)
@@ -88,11 +93,26 @@ ax1 = fig.add_subplot(gs[0])
 ax2 = fig.add_subplot(gs[1], sharex=ax1)
 
 # --- Top plot: cross sections ---
-ax1.plot(x, lo_central, 'g-', linewidth=2, label='LO')
-ax1.fill_between(x, lo_low, lo_up, color='green', alpha=0.3)
+if args.histogram:
+    # Step-style histogram for central values
+    ax1.stairs(lo_central, x_edges, label="LO", color='green', linewidth=2)
+    ax1.stairs(nlo_central, x_edges, label="NLO", color='blue', linewidth=2)
 
-ax1.plot(x, nlo_central, 'b-', linewidth=2, label='NLO')
-ax1.fill_between(x, nlo_low, nlo_up, color='blue', alpha=0.3)
+    # Shaded uncertainty band with step-like fill
+    ax1.fill_between(
+        x_edges[:-1], lo_low, lo_up,
+        step='post', color='green', alpha=0.3, label=None
+    )
+    ax1.fill_between(
+        x_edges[:-1], nlo_low, nlo_up,
+        step='post', color='blue', alpha=0.3, label=None
+    )
+else:
+    ax1.plot(x, lo_central, 'g-', linewidth=2, label='LO')
+    ax1.fill_between(x, lo_low, lo_up, color='green', alpha=0.3)
+
+    ax1.plot(x, nlo_central, 'b-', linewidth=2, label='NLO')
+    ax1.fill_between(x, nlo_low, nlo_up, color='blue', alpha=0.3)
 
 ax1.set_ylabel(config["ylabel_top"])
 xmin = float(config["xmin"]) if config["xmin"] not in [None, "None"] else x.min()
