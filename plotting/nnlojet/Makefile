@@ -32,12 +32,11 @@ NAMES = \
 	  for f in $$inputs; do \
 	    [ -f "$(DATADIR)/$$f" ] || { echo "Missing input: $(DATADIR)/$$f"; exit 2; }; \
 	  done; \
-	  infile_args=$$(for f in $$inputs; do echo -n "--input $$f "; done); \
 	  outfile=$$obs.pdf; \
 	  logflag=""; \
 	  echo "$$obs" | grep -q '_log$$' && logflag="--logscale"; \
 	  echo "$$order.$$obs.dat → [$$script] → $$outfile"; \
-	  $(PYTHON) $$script --path $(DATADIR) $$infile_args --output $$outfile $$logflag
+	  $(PYTHON) $$script --path $(DATADIR) --input $$inputs --output $$outfile $$logflag
 
   clean:
 	rm -f $(OUTDIR)/*.pdf
