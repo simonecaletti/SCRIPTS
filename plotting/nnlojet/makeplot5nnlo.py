@@ -33,6 +33,7 @@ config = {
     "ylabel_top": "cross section [pb]",
     "ylabel_bottom": "LO/NLO",
     "process": "$e^+e^-\rightarrow ZH(e^+e^-b\bar{b})$",
+    "ycut" : 0.01,
     "xmin": None,
     "xmax": None,
     "ymin": None,
@@ -148,7 +149,7 @@ else:
     ax1.set_xlabel(config["xlabel"])
 
 # Optional text box
-ax1.text(0.85, 0.92, config["process"] + "\n" + r"$\sqrt{s}=240$ GeV" + "\n" + r"$\alpha_S(m_Z) = 0.118$",
+ax1.text(0.85, 0.92, config["process"] + "\n" + r"$\sqrt{s}=240$ GeV" + "\n" + r"$\alpha_S(m_Z) = 0.118$"+ "\n" + r"Durham $y_{cut}={}$".format(config["ycut"]),
              transform=ax1.transAxes, ha='center', va='top')
 
 if args.add_logo:

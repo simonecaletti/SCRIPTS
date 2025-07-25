@@ -28,6 +28,7 @@ config = {
     "ylabel_top": "cross section [pb]",
     "ylabel_bottom": "LO/NLO",
     "process": "$e^+e^-\rightarrow ZH(e^+e^-b\bar{b})$",
+    "ycut" : 0.01,
     "xmin": None,
     "xmax": None,
     "ymin": None,
@@ -116,7 +117,7 @@ ax2.set_ylim(0.7, 1.3)
 ax2.grid(True, alpha=0.5)
 
 # --- Annotation ---
-ax1.text(0.85, 0.92, config["process"] + "\n" + r"$\sqrt{s}=240$ GeV" + "\n" + r"$\alpha_S(m_Z) = 0.118$",
+ax1.text(0.85, 0.92, config["process"] + "\n" + r"$\sqrt{s}=240$ GeV" + "\n" + r"$\alpha_S(m_Z) = 0.118$"+ "\n" + r"Durham $y_{cut}={}$".format(config["ycut"]),
          transform=ax1.transAxes, ha='center', va='top')
 
 # --- Optional logo ---
