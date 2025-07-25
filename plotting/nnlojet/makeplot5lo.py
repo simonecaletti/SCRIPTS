@@ -80,8 +80,10 @@ if args.histogram:
     ax.stairs(lo_central, x_edges, label="LO", color='green', linewidth=2)
 
     # Shaded uncertainty band with step-like fill
+    lo_low = pd.concat([lo_low, pd.Series([0])], ignore_index=True)
+    lo_up = pd.concat([lo_up, pd.Series([0])], ignore_index=True)
     ax.fill_between(
-        x_edges[:-1], lo_low, lo_up,
+        x_edges, lo_low, lo_up,
         step='post', color='green', alpha=0.3, label=None
     )
 else:
