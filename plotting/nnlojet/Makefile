@@ -5,32 +5,39 @@ DATADIR = combined/Final
 OUTDIR = plots
 
 NAMES = \
-  mH m12 m12low mZ ej1 ej2 dR_l12 dR_j12 min_dR_lmj min_dR_lpj
+  mZ dR_l12 mH_all mH_12 dR_j12 ej1 ej1_excl1  ej2 ej2_excl2 min_dR_lpj min_dR_lmj min_dR_lpj_excl2 min_dR_lmj_excl2 \
+  y12_log y23_log y34_log
 
-.PHONY: all clean $(NAMES)
+  .PHONY: all clean $(NAMES)
 
-# Default to NNLO if ORDER is not set
-all: $(NAMES)
+  # Default is ORDER=NNLO
+  all: $(NAMES)
 
-$(NAMES):
+  $(NAMES):
 	@mkdir -p $(OUTDIR)
 	@order=$${ORDER:-NNLO}; \
 	  prefix=$$(echo $$order | tr '[:upper:]' '[:lower:]'); \
 	  script=makeplot5$${prefix}.py; \
 	  obs=$@; \
-	  files=""; \
+	  inputs=""; \
 	  if [ "$$order" = "LO" ]; then \
-	    files="LO.$$obs.dat"; \
+	    inputs="LO.$$obs.dat"; \
 	  elif [ "$$order" = "NLO" ]; then \
-	    files="LO.$$obs.dat NLO.$$obs.dat"; \
+	    inputs="LO.$$obs.dat NLO.$$obs.dat"; \
 	  elif [ "$$order" = "NNLO" ]; then \
-	    files="LO.$$obs.dat NLO.$$obs.dat NNLO.$$obs.dat"; \
+	    inputs="LO.$$obs.dat NLO.$$obs.dat NNLO.$$obs.dat"; \
 	  else \
 	    echo "Unknown ORDER='$$order' (expected LO, NLO, NNLO)"; exit 1; \
 	  fi; \
+	  for f in $$inputs; do \
+	    [ -f "$(DATADIR)/$$f" ] || { echo "Missing input: $(DATADIR)/$$f"; exit 2; }; \
+	  done; \
+	  infile_args=$$(for f in $$inputs; do echo -n "--input $$f "; done); \
 	  outfile=$$obs.pdf; \
+	  logflag=""; \
+	  echo "$$obs" | grep -q '_log$$' && logflag="--logscale"; \
 	  echo "$$order.$$obs.dat → [$$script] → $$outfile"; \
-	  $(PYTHON) $$script --path $(DATADIR) --input $$files --output $$outfile --add-logo
+	  $(PYTHON) $$script --path $(DATADIR) $$infile_args --output $$outfile $$logflag
 
-clean:
+  clean:
 	rm -f $(OUTDIR)/*.pdf

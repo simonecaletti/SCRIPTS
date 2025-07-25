@@ -12,6 +12,7 @@ parser.add_argument('--path', default="combined/Final", help="Input common path 
 parser.add_argument('--input', nargs=2, required=True, help="Input filenames: first LO, second NLO")
 parser.add_argument('--output', default="output_lo_nlo_ratio.pdf", help="Output filename")
 parser.add_argument('--add-logo', action='store_true', help="Add 'NNLOJET' stylized logo on the top-right")
+parser.add_argument('--logscale', action='store_true', help="Use logarithmic scale on the x-axis")
 args = parser.parse_args()
 
 filename_lo = os.path.join(args.path, args.input[0])
@@ -103,6 +104,10 @@ ax1.set_xlim(xmin, xmax)
 if ymin is not None and ymax is not None:
     ax1.set_ylim(ymin, ymax)
 ax1.set_ylim(bottom=0)
+
+if args.logscale:
+    ax1.set_xscale("log")
+
 ax1.legend(loc='upper left')
 ax1.grid(True, alpha=0.5)
 

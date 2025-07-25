@@ -16,6 +16,7 @@ parser.add_argument('--enable-ratio', default=False, action='store_true', help="
 parser.add_argument('--denominator', choices=["LO", "NLO", "NNLO"], default="NNLO",
                     help="Choose denominator for ratio plot (default: NNLO)")
 parser.add_argument('--add-logo', action='store_true', help="Add 'NNLOJET' stylized logo on the top-right")
+parser.add_argument('--logscale', action='store_true', help="Use logarithmic scale on the x-axis")
 args = parser.parse_args()
 
 filename_lo = os.path.join(args.path, args.input[0])
@@ -125,6 +126,10 @@ ax1.set_xlim(xmin, xmax)
 if (ymin not in [None, "None"] and ymax not in [None, "None"]):
     ax1.set_ylim(ymin, ymax)
 ax1.set_ylim(bottom=0)
+
+if args.logscale:
+    ax1.set_xscale('log')
+
 ax1.legend(loc='upper left')
 ax1.grid(True, alpha=0.5)
 
