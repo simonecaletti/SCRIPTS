@@ -87,7 +87,7 @@ ax.legend(loc='upper left')
 ax.grid(True, alpha=0.5)
 
 # Optional text box
-ax.text(0.85, 0.92, config["process"] + "\n" + r"$\sqrt{s}=240$ GeV" + "\n" + r"$\alpha_S(m_Z) = 0.118$" + "\n" + r"Durham $y_{cut}={}$".format(config["ycut"]),
+ax.text(0.85, 0.92, config["process"] + "\n" + r"$\sqrt{s}=240$ GeV" + "\n" + r"$\alpha_S(m_Z) = 0.118$" + "\n" + r"Durham $y_{{cut}}={}$".format(config["ycut"]),
         transform=ax.transAxes, ha='center', va='top')
 
 # Optional logo
