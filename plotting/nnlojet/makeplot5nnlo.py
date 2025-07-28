@@ -19,8 +19,8 @@ parser.add_argument('--denominator', choices=["LO", "NLO", "NNLO"], default="NNL
 parser.add_argument('--add-logo', action='store_true', help="Add 'NNLOJET' stylized logo on the top-right")
 parser.add_argument('--logscale', action='store_true', help="Use logarithmic scale on the x-axis")
 parser.add_argument('--histogram', action='store_true', help="Plot as histogram instead of function-style curve")
-parser.add_argument('--place-text', type=int, default=2, choices=[1, 2, 3, 4, 5, 6],
-                    help="Position of the optional text box: 1=upper-left, 2=upper-central, 3=lower-left, 4=lower-central, 5=lower-right")
+parser.add_argument('--place-text', type=int, default=3, choices=[1, 2, 3, 4, 5, 6],
+                    help="Position of the optional text box: 1=upper-left, 2=upper-central, 3=upper-right (default), 4=lower-left, 5=lower-central, 6=lower-right")
 args = parser.parse_args()
 
 filename_lo = os.path.join(args.path, args.input[0])
