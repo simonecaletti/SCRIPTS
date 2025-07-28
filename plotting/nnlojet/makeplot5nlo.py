@@ -15,6 +15,8 @@ parser.add_argument('--output', default="output_lo_nlo_ratio.pdf", help="Output 
 parser.add_argument('--add-logo', action='store_true', help="Add 'NNLOJET' stylized logo on the top-right")
 parser.add_argument('--logscale', action='store_true', help="Use logarithmic scale on the x-axis")
 parser.add_argument('--histogram', action='store_true', help="Plot as histogram instead of function-style curve")
+parser.add_argument('--place-text', type=int, default=2, choices=[1, 2, 3, 4, 5, 6],
+                    help="Position of the optional text box: 1=upper-left, 2=upper-central, 3=lower-left, 4=lower-central, 5=lower-right")
 args = parser.parse_args()
 
 filename_lo = os.path.join(args.path, args.input[0])
@@ -145,9 +147,22 @@ ax2.set_xlabel(config["xlabel"])
 ax2.set_ylim(0.7, 1.3)
 ax2.grid(True, alpha=0.5)
 
-# --- Annotation ---
-ax1.text(0.85, 0.92, config["process"] + "\n" + r"$\sqrt{s}=240$ GeV" + "\n" + r"$\alpha_S(m_Z) = 0.118$"+ "\n" + r"Durham $y_{{cut}}={}$".format(config["ycut"]),
-         transform=ax1.transAxes, ha='center', va='top')
+# Optional text box
+textbox = (
+    config["process"] + "\n"
+    + r"$\sqrt{s}=240$ GeV" + "\n"
+    + r"$\alpha_S(m_Z) = 0.118$" + "\n"
+    + r"Durham $y_{{cut}}={}$".format(config["ycut"])
+)
+pos = {
+    1: (0.05, 0.95, 'left',  'top'),    # upper-left
+    2: (0.5, 0.95, 'center',  'top'),  # upper-central
+    3: (0.95, 0.95, 'right', 'top'),    # upper-right
+    4: (0.05, 0.05, 'left',  'bottom'), # lower-left
+    5: (0.5, 0.05, 'center',  'bottom'), # lower-central
+    6: (0.95, 0.05, 'right', 'bottom')  # lower-right
+}[args.place_text]
+ax1.text(pos[0], pos[1], textbox, transform=ax1.transAxes, ha=pos[2], va=pos[3])
 
 # --- Optional logo ---
 if args.add_logo:

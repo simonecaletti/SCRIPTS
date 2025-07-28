@@ -10,6 +10,24 @@ NAMES = \
 
   .PHONY: all clean $(NAMES)
 
+# Observable-specific options
+mZ_OPTS = "--add-logo"
+dR_l12_OPTS = "--histogram --add-logo"
+mH_all_OPTS = "--add-logo"
+mH_12_OPTS = "--add-logo"
+dR_j12_OPTS = "--histogram --add-logo"
+ej1_OPTS = "--histogram --add-logo --place-text 5"
+ej1_excl1_OPTS = "--histogram --add-logo"
+ej2_OPTS = "--histogram --add-logo --place-text 5"
+ej2_excl2_OPTS = "--histogram --add-logo --place-text 5"
+min_dR_lpj_OPTS = "--histogram --add-logo --place-text 6"
+min_dR_lmj_OPTS = "--histogram --add-logo --place-text 6"
+min_dR_lpj_excl2_OPTS = "--histogram --add-logo --place-text 6"
+min_dR_lmj_excl2_OPTS = "--histogram --add-logo --place-text 6"
+y12_log_OPTS = "--histogram --add-logo --logscale"
+y23_log_OPTS = "--histogram --add-logo --logscale"
+y34_log_OPTS = "--histogram --add-logo --logscale"
+
   # Default is ORDER=NNLO
   all: $(NAMES)
 
@@ -33,10 +51,9 @@ NAMES = \
 	    [ -f "$(DATADIR)/$$f" ] || { echo "Missing input: $(DATADIR)/$$f"; exit 2; }; \
 	  done; \
 	  outfile=$$obs.pdf; \
-	  logflag=""; \
-	  echo "$$obs" | grep -q '_log$$' && logflag="--logscale"; \
 	  echo "$$order.$$obs.dat → [$$script] → $$outfile"; \
-	  $(PYTHON) $$script --path $(DATADIR) --input $$inputs --output $$outfile $$logflag --histogram
+	  opts=$($@_OPTS); \
+  $(PYTHON) $$script --path $(DATADIR) --input $$inputs --output $$outfile $$opts
 
   clean:
 	rm -f $(OUTDIR)/*.pdf
