@@ -1,0 +1,57 @@
+diff -r 73ddb395e8e2 driver/makefile
+--- a/driver/makefile	Sun Jul 27 17:57:45 2025 +0200
++++ b/driver/makefile	Tue Jul 29 10:55:47 2025 +0200
+@@ -11,9 +11,11 @@
+ useomp = 1
+ 
+ ##### set up compilers & flags
+-FC = gfortran
++#FC = gfortran
++FC = ftn 
+ #FC = ifort
+-CC = gcc
++#CC = gcc
++CC = cc
+ CXX = g++
+ AR = ar
+ ifeq ($(UNAME),Darwin)
+@@ -33,7 +35,7 @@
+     # -fimplicit-none -ffree-line-length-0
+     # -ffpe-trap=zero,overflow,underflow
+     # FFLAGS = -g -Wall -Wextra -Warray-temporaries -Wconversion -fbacktrace -fno-align-commons -ffixed-line-length-none -fcheck=all -J $(MODS_DIR) -I$(INCPATH)
+-    FFLAGS = -g -Wall -Wextra -Wconversion -fbacktrace -fno-align-commons -ffixed-line-length-none -fcheck=all -J $(MODS_DIR) -I$(INCPATH)
++    FFLAGS += -g -Wall -Wextra -Wconversion -fbacktrace -fno-align-commons -ffixed-line-length-none -fcheck=all -J $(MODS_DIR) -I$(INCPATH)
+   endif
+   CXXFLAGS = -O0 -g
+ else
+@@ -42,7 +44,7 @@
+     FFLAGS = -Ofast -no-wrap-margin -extend_source 132 -module $(MODS_DIR) -I$(INCPATH)
+     # -fpp -qopenmp
+   else
+-    FFLAGS = -O0 -fno-align-commons -ffixed-line-length-none -J $(MODS_DIR) -I$(INCPATH)
++    FFLAGS += -O0 -fno-align-commons -ffixed-line-length-none -J $(MODS_DIR) -I$(INCPATH)
+   endif
+   CXXFLAGS = -O2
+ endif
+@@ -52,12 +54,15 @@
+ CXXFLAGS += -std=c++11
+ 
+ ##### special flags only for gfortran >= 10
+-ifeq ($(FC),gfortran)
+-  FC_VER_GTE10 := $(shell echo `gfortran -dumpversion | cut -f1 -d.` \>= 10 | bc )
+-  ifeq "$(FC_VER_GTE10)" "1"
+-    FFLAGS +=  -fallow-argument-mismatch
+-  endif
+-endif
++#ifeq ($(filter $(FC),gfortran ftn),$(FC))
++#ifeq ($(FC),gfortran) #SC: old implementation
++#  FC_VER_GTE10 := $(shell echo `$(FC) -dumpversion | cut -f1 -d.` \>= 10 | bc )
++#  ifeq "$(FC_VER_GTE10)" "1"
++#    FFLAGS +=  -fallow-argument-mismatch
++#    echo "CIAO SIMONEEEE"
++#  endif
++#endif
++FFLAGS +=  -fallow-argument-mismatch
+ 
+ ##### set up linker & flags
+ LD = $(CXX)

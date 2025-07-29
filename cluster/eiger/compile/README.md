@@ -1,0 +1,2 @@
+- upload .modules (need for fortran > 10, which wrapped to ftn after load module)
+- apply patch, then make -j (srun --partition=debug --pty bash, for working directly on computing node)
