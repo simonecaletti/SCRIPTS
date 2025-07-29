@@ -29,7 +29,7 @@ fi
 USED_HR=$(sreport cluster AccountUtilizationByUser Start=2025-07-01 End=now Accounts=eth5f | \
 awk '/'"$USER"'/ {cpu_min = $6; node_hr = cpu_min / (256 * 60); printf "%.2f", node_hr}')
 
-ù# === CONVERT TO NODE-HOURS ===
+# === CONVERT TO NODE-HOURS ===
 USED_NDHR=$(awk -v cmin=$CPU_MIN -v cores=$CPU_PER_NODE 'BEGIN { printf "%.2f", cmin / (cores * 60) }')
 USED_MIN=$(awk "BEGIN {printf \"%.2f\", $USED_NDHR * 60}")
 USED_DAY=$(awk "BEGIN {printf \"%.2f\", $USED_NDHR / 24}")
