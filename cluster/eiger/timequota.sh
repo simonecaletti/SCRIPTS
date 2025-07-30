@@ -22,11 +22,15 @@ SREPORT_OUTPUT=$(sreport cluster AccountUtilizationByUser Start=$QUARTER_START E
 # === PRINT MEMBER USAGE (CPU Minutes) ===
 echo -e "👥  Member Usage (CPU Minutes) for account '$ACCOUNT' since $QUARTER_START"
 echo    "------------------------------------------------------------"
+iflag=0
 echo "$SREPORT_OUTPUT" | awk '
   /^[[:space:]]*alps-eig\+/ {
     if ($3 != "") {
-      # User line: column 3 = login, 4 = name, 5 = CPU minutes
-      printf " - %-15s %-20s %10s CPU min\n", $3, $4, $5
+      if (iflag != 0) {
+      # User line: column 3 = login, 4 = name, 6 = CPU minutes
+      printf " - %-15s %-20s %.2f Node/hours\n", $3, $4, $6/256/60
+      }
+     iflag ++;
     }
   }'
 echo ""
@@ -44,9 +48,9 @@ USED_DAY=$(awk "BEGIN {printf \"%.2f\", $USED_NDHR / 24}")
 echo -e "🧮  Total Node-Hour Usage This Quarter from group $ACCOUNT (since $QUARTER_START)"
 echo    "-------------------------------------------------------------"
 echo "Used Wall Time (scaled by core usage):"
-echo " - Node-Minutes : $USED_MIN"
-echo " - Node-Hours   : $USED_NDHR"
-echo " - Node-Days    : $USED_DAY"
+echo " - Node/minutes : $USED_MIN"
+echo " - Node/hours   : $USED_NDHR"
+echo " - Node/days    : $USED_DAY"
 echo ""
 
 # === PRINT BAR FUNCTION ===
