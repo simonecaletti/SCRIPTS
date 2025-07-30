@@ -15,28 +15,34 @@ RESET=$(tput sgr0)
 # === DETECT CURRENT QUARTER START ===
 QUARTER_START=$(date +"%Y")-$(printf "%02d" $(( (($(date +%m)-1)/3*3)+1 )))-01
 
-# === EXTRACT CPU MINUTES FROM SREPORT ===
-CPU_MIN=$(sreport cluster AccountUtilizationByUser Start=$QUARTER_START End=now Accounts=$ACCOUNT 2>/dev/null | \
-awk -v user="$USER" '$0 ~ user {print $6}')
+# === EXTRACT FULL SREPORT ===
+SREPORT_OUTPUT=$(sreport cluster AccountUtilizationByUser Start=$QUARTER_START End=now Accounts=$ACCOUNT 2>/dev/null)
+#echo $SREPORT_OUTPUT
 
-# === IF NO DATA ===
-if [[ -z "$CPU_MIN" ]]; then
-    echo "No usage data available from sreport for account '$ACCOUNT' since $QUARTER_START."
-    exit 1
-fi
+# === PRINT MEMBER USAGE (CPU Minutes) ===
+echo -e "👥  Member Usage (CPU Minutes) for account '$ACCOUNT' since $QUARTER_START"
+echo    "------------------------------------------------------------"
+echo "$SREPORT_OUTPUT" | awk '
+  /^[[:space:]]*alps-eig\+/ {
+    if ($3 != "") {
+      # User line: column 3 = login, 4 = name, 5 = CPU minutes
+      printf " - %-15s %-20s %10s CPU min\n", $3, $4, $5
+    }
+  }'
+echo ""
 
-# === COMPUTE NODE-HOURS USED FROM COMPLETED JOBS ===
-USED_HR=$(sreport cluster AccountUtilizationByUser Start=2025-07-01 End=now Accounts=eth5f | \
-awk '/'"$USER"'/ {cpu_min = $6; node_hr = cpu_min / (256 * 60); printf "%.2f", node_hr}')
+# === EXTRACT TOTAL USAGE ===
+CPU_MIN=$(echo "$SREPORT_OUTPUT" | awk 'NF == 4 && $3 ~ /^[0-9]+$/ { print $3 }')
+#echo "cpu min: $CPU_MIN"
 
 # === CONVERT TO NODE-HOURS ===
 USED_NDHR=$(awk -v cmin=$CPU_MIN -v cores=$CPU_PER_NODE 'BEGIN { printf "%.2f", cmin / (cores * 60) }')
 USED_MIN=$(awk "BEGIN {printf \"%.2f\", $USED_NDHR * 60}")
 USED_DAY=$(awk "BEGIN {printf \"%.2f\", $USED_NDHR / 24}")
 
-# === DISPLAY USAGE ===
-echo -e "🧮  Node-Hour Usage This Quarter (since $QUARTER_START)"
-echo    "------------------------------------------------------"
+# === DISPLAY TOTAL USAGE ===
+echo -e "🧮  Total Node-Hour Usage This Quarter from group $ACCOUNT (since $QUARTER_START)"
+echo    "-------------------------------------------------------------"
 echo "Used Wall Time (scaled by core usage):"
 echo " - Node-Minutes : $USED_MIN"
 echo " - Node-Hours   : $USED_NDHR"
