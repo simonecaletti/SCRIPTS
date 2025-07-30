@@ -1,0 +1,45 @@
+diff -r dd1a416d0d03 driver/makedepend.sh
+--- a/driver/makedepend.sh	Tue Jul 29 15:51:49 2025 +0200
++++ b/driver/makedepend.sh	Wed Jul 30 12:04:09 2025 +0200
+@@ -35,6 +35,7 @@
+         -e "s/:[[:blank:]]*BinData_mod/: BinData.o/g" \
+         -e "s/:[[:blank:]]*Constants_mod/: Constants.o/g" \
+         -e "s/:[[:blank:]]*Kinds_mod/: Kinds.o/g" \
++        -e "s/:[[:blank:]]*KinData_mod/: KinData.o/g" \
+         -e "s/:[[:blank:]]*Softdrop_mod/: Softdrop.o/g" \
+         -e "s/:[[:blank:]]*Vegas_mod/: Vegas.o/g" \
+         -e "s/:[[:blank:]]*Mapping_mod/: Mapping.o/g" \
+@@ -49,7 +50,6 @@
+         -e "s/:[[:blank:]]*Charges_EW_mod/: Charges_EW.o/g" \
+         -e "s/:[[:blank:]]*Run_mod/: Run.o/g" \
+         -e "s/:[[:blank:]]*Channels_mod/: Channels.o/g" \
+-        -e "s/:[[:blank:]]*KinData_mod/: KinData.o/g" \
+         -e "s/:[[:blank:]]*Mapping_mod/: Mapping.o/g" \
+         -e "s/:[[:blank:]]*MiNLO_mod/: MiNLO.o/g" \
+         -e "s/:[[:blank:]]*Checks_mod/: Checks.o/g" \
+diff -r dd1a416d0d03 driver/makefile
+--- a/driver/makefile	Tue Jul 29 15:51:49 2025 +0200
++++ b/driver/makefile	Wed Jul 30 12:04:09 2025 +0200
+@@ -11,9 +11,9 @@
+ useomp = 1
+ 
+ ##### set up compilers & flags
+-FC = gfortran
++FC = gfortran-12
+ #FC = ifort
+-CC = gcc
++CC = gcc-12
+ CXX = g++
+ AR = ar
+ ifeq ($(UNAME),Darwin)
+@@ -53,6 +53,10 @@
+     FFLAGS +=  -fallow-argument-mismatch
+   endif
+ endif
++##### special flags only for gfortran >= 10
++ifeq ($(FC),gfortran-12)
++  FFLAGS +=  -fallow-argument-mismatch
++endif
+ 
+ # for new Veags module
+ FFLAGS += -cpp -D USE_NNLOJET -D USE_SOCKETS
