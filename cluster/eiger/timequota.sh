@@ -13,7 +13,11 @@ GREEN=$(tput setaf 2)
 RESET=$(tput sgr0)
 
 # === DETECT CURRENT QUARTER START ===
-QUARTER_START=$(date +"%Y")-$(printf "%02d" $(( (($(date +%m)-1)/3*3)+1 )))-01
+month=$((10#$(date +%m)))  # mese corrente come decimale
+year=$(date +%Y)
+quarter_start_month=$(( ((month - 1) / 3) * 3 + 1 ))
+QUARTER_START=$(printf "%s-%02d-01" "$year" "$quarter_start_month")
+
 
 # === EXTRACT FULL SREPORT ===
 SREPORT_OUTPUT=$(sreport cluster AccountUtilizationByUser Start=$QUARTER_START End=now Accounts=$ACCOUNT 2>/dev/null)
