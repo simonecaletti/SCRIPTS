@@ -171,10 +171,29 @@ if args.enable_ratio and ax2:
             raise ValueError("Denominator for ratio plot not among the input files")
         else:
             i_den = -1
-            if args.denominator: i_den = args.input.index(args.denominator)
-            val_ratio.append([n/d for n, d in zip(val_central[i]/norm[i], val_central[i_den]/norm[i_den])])
-            val_ratio_low.append([n/d for n, d in zip(val_low[i]/norm[i], val_central[i_den]/norm[i_den])])
-            val_ratio_up.append([n/d for n, d in zip(val_up[i]/norm[i], val_central[i_den]/norm[i_den])])
+            if args.denominator:
+                i_den = args.input.index(args.denominator)
+
+                # Prepare numerator and denominator arrays with normalization
+                num_central = np.array(val_central[i]) / norm[i]
+                den_central = np.array(val_central[i_den]) / norm[i_den]
+                num_low = np.array(val_low[i]) / norm[i]
+                num_up = np.array(val_up[i]) / norm[i]
+
+                # Apply mask to avoid division by zero
+                mask = den_central != 0
+
+                ratio = np.full_like(num_central, np.nan)
+                ratio[mask] = num_central[mask] / den_central[mask]
+                val_ratio.append(ratio)
+
+                ratio_low = np.full_like(num_low, np.nan)
+                ratio_low[mask] = num_low[mask] / den_central[mask]
+                val_ratio_low.append(ratio_low)
+
+                ratio_up = np.full_like(num_up, np.nan)
+                ratio_up[mask] = num_up[mask] / den_central[mask]
+                val_ratio_up.append(ratio_up)
 
     for i in range(len(val_ratio)):
         if args.histogram:
