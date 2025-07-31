@@ -133,11 +133,11 @@ for i in range(len(val_central)):
         ax1.stairs(val_central[i]/norm[i], x_edges, label=config['legend'][i], color=color[i], linewidth=2)
 
         # Shaded uncertainty band with step-like fill
-        low = pd.concat([val_low[i]/norm[i], pd.Series([0])], ignore_index=True)
-        up = pd.concat([val_up[i]/norm[i], pd.Series([0])], ignore_index=True)
+        low = pd.concat([pd.Series(val_low[i]/norm[i]), pd.Series([0])], ignore_index=True)
+        up = pd.concat([pd.Series(val_up[i]/norm[i]), pd.Series([0])], ignore_index=True)
         ax1.fill_between(
             x_edges, low, up,
-            step='post', color='green', alpha=0.3, label=None
+            step='post', color=color[i], alpha=0.3, label=None
         )
 
     else:
@@ -164,16 +164,30 @@ ax1.grid(True, alpha=0.5)
 # Bottom plot: ratio
 if args.enable_ratio and ax2:
     val_ratio= []
+    val_ratio_low = []
+    val_ratio_up = []
     for i in range(len(val_central)):
         if args.denominator and args.denominator not in args.input:
             raise ValueError("Denominator for ratio plot not among the input files")
         else:
             i_den = -1
             if args.denominator: i_den = args.input.index(args.denominator)
-            val_ratio.append([n/d for n, d in zip(val_central[i], val_central[i_den])])
+            val_ratio.append([n/d for n, d in zip(val_central[i]/norm[i], val_central[i_den]/norm[i_den])])
+            val_ratio_low.append([n/d for n, d in zip(val_low[i]/norm[i], val_central[i_den]/norm[i_den])])
+            val_ratio_up.append([n/d for n, d in zip(val_up[i]/norm[i], val_central[i_den]/norm[i_den])])
 
     for i in range(len(val_ratio)):
-        ax2.plot(x, val_ratio[i], color=color[i])
+        if args.histogram:
+            ax2.stairs(val_ratio[i], x_edges, label=config['legend'][i], color=color[i], linewidth=2)
+            ratio_low = pd.concat([pd.Series(val_ratio_low[i]), pd.Series([0])], ignore_index=True)
+            ratio_up = pd.concat([pd.Series(val_ratio_up[i]), pd.Series([0])], ignore_index=True)
+            ax2.fill_between(
+                x_edges, ratio_low, ratio_up,
+                step='post', color=color[i], alpha=0.3, label=None
+            )
+        else:
+            ax2.plot(x, val_ratio[i], color=color[i])
+            ax2.fill_between(x, val_ratio_low[i], val_ratio_up[i], color=color[i], alpha=0.3)
 
     ax2.set_ylabel(config["ylabel_bottom"])
     ax2.set_xlabel(config["xlabel"])
