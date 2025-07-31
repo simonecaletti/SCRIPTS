@@ -19,6 +19,7 @@ parser.add_argument('--denominator', help="Choose denominator for ratio plot amo
 parser.add_argument('--add-logo', action='store_true', help="Add 'NNLOJET' stylized logo on the top-right")
 parser.add_argument('--logscale', action='store_true', help="Use logarithmic scale on the x-axis")
 parser.add_argument('--histogram', action='store_true', help="Plot as histogram instead of function-style curve")
+parser.add_argument('--rescale', type=float, help="Rescale the x axis by a factor")
 parser.add_argument('--normalize', nargs='+', type=float, help="Normalization factor for the top plot (enter a factor per input file)")
 parser.add_argument('--place-text', type=int, default=3, choices=[1, 2, 3, 4, 5, 6],
                     help="Position of the optional text box: 1=upper-left, 2=upper-central, 3=upper-right (default), 4=lower-left, 5=lower-central, 6=lower-right")
@@ -45,12 +46,17 @@ config = {
     "xmin": None,
     "xmax": None,
     "ymin": None,
-    "ymax": None
+    "ymax": None,
+    "ymin_ratio": 0.5,
+    "ymax_ratio": 1.5
 }
 
 if os.path.isfile(config_file):
     with open(config_file, 'r') as f:
         for line in f:
+            line = line.strip()
+            if not line or line.startswith('#'):
+                continue
             if "=" in line:
                 key, val = line.strip().split("=", 1)
                 key = key.strip()
@@ -92,9 +98,12 @@ for i_df in range(1,len(df_list)):
         raise ValueError("Central bin values do not match between (at least) two input files")
 
 x = df_list[0]["center"]
+if args.rescale: x = x / args.rescale
 x_edges = df_list[0]["lower"].tolist()
 x_edges.append(df_list[0]["upper"].iloc[-1])
 x_edges = np.array(x_edges)
+if args.rescale: x_edges = x_edges / args.rescale
+
 
 # LO
 val_central = []
@@ -210,7 +219,7 @@ if args.enable_ratio and ax2:
 
     ax2.set_ylabel(config["ylabel_bottom"])
     ax2.set_xlabel(config["xlabel"])
-    ax2.set_ylim(0.7, 1.1)
+    ax2.set_ylim(config["ymin_ratio"], config["ymax_ratio"])
     ax2.grid(True, alpha=0.5)
 else:
     ax1.set_xlabel(config["xlabel"])
