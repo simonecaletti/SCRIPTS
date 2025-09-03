@@ -1,0 +1,2 @@
+module load cray/23.12
+module load gcc-native/12.3  
