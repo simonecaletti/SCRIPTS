@@ -16,41 +16,45 @@ SPLIT_RR=true
 # Example: R,V -> 5 ; VV,RV,RR -> 8
 # You can also specify RRa / RRb to override only in split RR mode
 declare -A NUM_NODES_MAP=(
-  [R]=5
-  [V]=5
-  [VV]=8
+  [R]=2
+  [V]=2
+  [VV]=5
   [RV]=8
-  [RR]=8
+  #[RR]=8
   # Optional specific overrides when SPLIT_RR=true:
-  # [RRa]=8
-  # [RRb]=8
+  [RRa]=8
+  [RRb]=8
+)
+
+# WARMUP for each channel (in <base>.warmup.run)
+# You can also specify RRa / RRb to override only in split RR mode (if needed)
+declare -A WARMUP_MAP=(
+  #[VV]="500000[20]"
+  #[RR]="500000[20]"
+  #[RR]="500000[10]"
+  # Optional:
+  #[RRa]="500000[10]"
+  #[RRb]="500000[20]"
 )
 
 # PRODUCTION for each channel (in <base>.run)
 # Only listed channels will be changed; others left as-is.
 # You can also specify RRa / RRb to override only in split RR mode
 declare -A PRODUCTION_MAP=(
+  [V]="200000[20]"
+  [R]="200000[20]"
   [VV]="500000[20]"
   [RV]="500000[20]"
   [RR]="500000[20]"
   # Optional (takes precedence over RR if present):
-  # [RRa]="500000[20]"
-  # [RRb]="500000[20]"
-)
-
-# WARMUP for each channel (in <base>.warmup.run)
-# You can also specify RRa / RRb to override only in split RR mode (if needed)
-declare -A WARMUP_MAP=(
-  [RR]="200000[10]"
-  # Optional:
-  # [RRa]="200000[10]"
-  # [RRb]="200000[10]"
+  [RRa]="80000[5]"
+  [RRb]="200000[20]"
 )
 
 # Defaults to apply to LO templates BEFORE copying
-LO_TEMPLATE_NUM_NODES_DEFAULT=5
-LO_TEMPLATE_PRODUCTION_DEFAULT="500000[20]"
-LO_TEMPLATE_WARMUP_DEFAULT="200000[10]"
+LO_TEMPLATE_NUM_NODES_DEFAULT=1
+LO_TEMPLATE_WARMUP_DEFAULT="100000[10]"
+LO_TEMPLATE_PRODUCTION_DEFAULT="100000[20]"
 
 ############################################
 
