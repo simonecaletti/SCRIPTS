@@ -15,3 +15,7 @@ You can set the initial seed.
 from an existing one.
 - myjobs.sh print running jobs.
 - timequota.sh print remaining quota for the group from terminal line
+
+TO DO:
+- update submit_all_warmup.sh and setchannels.sh to do separated folders 
+for RRa and RRb. Better practice. 
