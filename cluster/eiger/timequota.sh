@@ -32,7 +32,7 @@ echo "$SREPORT_OUTPUT" | awk '
     if ($3 != "") {
       if (iflag != 0) {
       # User line: column 3 = login, 4 = name, 6 = CPU minutes
-      printf " - %-15s %-20s %.2f Node/hours\n", $3, $4, $6/256/60
+      printf " - %-15s %-20s %.2f NodeHours\n", $3, $4, $6/256/60
       }
      iflag ++;
     }
@@ -52,9 +52,9 @@ USED_DAY=$(awk "BEGIN {printf \"%.2f\", $USED_NDHR / 24}")
 echo -e "🧮  Total Node-Hour Usage This Quarter from group $ACCOUNT (since $QUARTER_START)"
 echo    "-------------------------------------------------------------"
 echo "Used Wall Time (scaled by core usage):"
-echo " - Node/minutes : $USED_MIN"
-echo " - Node/hours   : $USED_NDHR"
-echo " - Node/days    : $USED_DAY"
+echo " - NodeMinutes : $USED_MIN"
+echo " - NodeHours   : $USED_NDHR"
+echo " - NodeDays    : $USED_DAY"
 echo ""
 
 # === PRINT BAR FUNCTION ===
@@ -80,6 +80,6 @@ print_bar() {
 
 # === PERCENTAGE + BAR ===
 PCT=$(awk "BEGIN {printf \"%.2f\", ($USED_NDHR/$SCALE_NDHR)*100}")
-echo "Used quota scaled to quarter availability ($SCALE_NDHR node/hours):"
+echo "Used quota scaled to quarter availability ($SCALE_NDHR NodeHours):"
 print_bar "$PCT"
 
